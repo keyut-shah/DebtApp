@@ -39,6 +39,17 @@
             "backgroundColor": "#000000"
           }
         }
+      ],
+      [
+        "react-native-android-widget",
+        {
+          "widgets": [
+            {
+              "name": "Hello",
+              "label": "My Hello Widget"
+            }
+          ]
+        }
       ]
     ],
     "experiments": {
