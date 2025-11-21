@@ -14,6 +14,15 @@ const widgetConfig: WithAndroidWidgetsParams = {
             previewImage: './assets/widget-preview/hello.png',
             updatePeriodMillis: 1800000,
         },
+        {
+            name: 'Debt',
+            label: 'Debt Calculator',
+            description: 'Track your debt and days left',
+            previewImage: './assets/images/icon.png',
+            minWidth: '320dp',
+            minHeight: '120dp',
+            updatePeriodMillis: 3600000, // 1 hour auto-refresh
+        },
     ],
 };
 
@@ -29,6 +38,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     newArchEnabled: true,
     ios: {
         supportsTablet: true,
+        bundleIdentifier: 'com.anonymous.DebtApp',
     },
     android: {
         adaptiveIcon: {
