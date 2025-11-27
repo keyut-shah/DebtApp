@@ -2,7 +2,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as DocumentPicker from 'expo-document-picker';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import React, { useEffect, useState } from 'react';
 import { Alert, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
@@ -65,12 +65,39 @@ export default function SettingsScreen() {
 
     const handleExport = async () => {
         try {
+            console.log('📤 Starting export...');
             const data = await exportAll();
+            console.log('📦 Data exported:', data);
+
+            // Check if documentDirectory is available
+            if (!FileSystem.documentDirectory) {
+                throw new Error('File system not available');
+            }
+
             const fileUri = FileSystem.documentDirectory + 'debt-calculator-backup.json';
+            console.log('📁 Writing to:', fileUri);
+
             await FileSystem.writeAsStringAsync(fileUri, JSON.stringify(data, null, 2));
-            await Sharing.shareAsync(fileUri);
+            console.log('✅ File written successfully');
+
+            // Check if sharing is available
+            const isAvailable = await Sharing.isAvailableAsync();
+            if (!isAvailable) {
+                Alert.alert('Error', 'Sharing is not available on this device');
+                return;
+            }
+
+            await Sharing.shareAsync(fileUri, {
+                mimeType: 'application/json',
+                dialogTitle: 'Export Debt Calculator Data',
+                UTI: 'public.json'
+            });
+            console.log('✅ Share dialog opened');
+            Alert.alert('Success', 'Data exported successfully!');
         } catch (error) {
-            Alert.alert('Error', 'Failed to export data');
+            console.error('❌ Export error:', error);
+            const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+            Alert.alert('Error', `Failed to export data: ${errorMessage}`);
         }
     };
 
